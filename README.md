@@ -1,3 +1,8 @@
+N.B : Ceci est ma première app codé en C++
+
+SchoolTerminal est une mini-application conçue pour simuler un système de gestion scolaire basique.
+Elle permet à chaque élève de s’authentifier via un identifiant unique, d’enregistrer ses matières, notes et coefficients, et de calculer sa moyenne générale (sans base de données).
+
 Pour executer actuellement le projet, vous aviez besoin de l'IDE CLion (https://www.jetbrains.com/clion/download/?section=windows).
 
 Vous l'installer, vous cloner le depot grace à l'IDEA et vous executer l'app.
