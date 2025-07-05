@@ -859,8 +859,7 @@ Eleve createStudent()
         std::ofstream idFile("../../data/id.txt", std::ios::app);
         if (idFile.is_open())
         {
-            idFile << "\n"
-                   << id;
+            idFile << id << "\n";
             idFile.close();
             std::cout << std::endl;
         }
