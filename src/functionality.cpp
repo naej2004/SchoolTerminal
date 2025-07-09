@@ -21,12 +21,13 @@ void beginProgram()
     {
         std::cout << "OPTION DISPONIBLE\n" << std::endl;
         std::cout << "\t1- Se connecter " << std::endl;
-        std::cout << "\t2- Quitter l'application " << std::endl;
+        std::cout << "\t2- Creer un compte " << std::endl;
+        std::cout << "\t3- Quitter l'application" << std::endl;
         std::cout << "\nEntrer votre choix : ";
         std::cin >> choice;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         entryErrorForInt();
-    }while (choice != 1 && choice != 2);
+    }while (choice != 1 && choice != 2 && choice != 3);
     if (choice == 1)
     {
         std::array<std::string, 5> infoStudents{};
@@ -41,6 +42,12 @@ void beginProgram()
             menu(student);
         }
     }
+    else if(choice == 2)
+    {
+      auto const eleve = createStudent();
+        menu(eleve);
+    }
+
 }
 
 std::vector<std::string> listMatiere(const Eleve &student)
@@ -795,11 +802,32 @@ std::string filesStudent(const std::string &idUser)
 
 Eleve createStudent()
 {
-    std::cout << "Entrer un ID : ";
+    bool unique;
     std::string id;
-    std::cin >> id;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    id = toLower(id);
+    do
+    {
+        std::cout << "Entrer un ID : ";
+        std::cin >> id;
+        id = toLower(id);
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::ifstream idFile{"../../data/id.txt"};
+        if (idFile.is_open())
+        {
+            std::string line;
+            while (std::getline(idFile, line))
+            {
+                if (toLower(line) == id)
+                {
+                    unique = false;
+                    std::cout << "ID deja utilise " << std::endl;
+                }
+                else
+                {
+                    unique = true;
+                }
+            }
+        }
+    }while (unique == false);
     std::cout << "Entrer votre nom de famille : ";
     std::string nom;
     std::cin >> nom;
