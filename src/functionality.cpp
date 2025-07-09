@@ -19,10 +19,10 @@ void beginProgram()
     int choice;
     do
     {
-        std::cout << "Option possible : " << std::endl;
-        std::cout << "1- Se connecter " << std::endl;
-        std::cout << "2- Quitter l'application " << std::endl;
-        std::cout << "Entrer votre choix : ";
+        std::cout << "OPTION DISPONIBLE\n" << std::endl;
+        std::cout << "\t1- Se connecter " << std::endl;
+        std::cout << "\t2- Quitter l'application " << std::endl;
+        std::cout << "\nEntrer votre choix : ";
         std::cin >> choice;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         entryErrorForInt();
@@ -350,7 +350,7 @@ void menu(const Eleve &student)
                     std::cin.get();
                     break;
                 }
-                std::cout << "LISTE DES NOTES DE " << student.getName() << " " << student.getPrenom() << " (" <<
+                std::cout << "\nLISTE DES NOTES DE " << student.getName() << " " << student.getPrenom() << " (" <<
                     student.getId() << ") : \n" << std::endl;
 
                 for (auto i = 1; i <= allMatiere.size(); ++i)
@@ -361,8 +361,9 @@ void menu(const Eleve &student)
                     {
                         std::cout << "\t- " << note.getValue() << "/" << note.getMaxPoint() << std::endl;
                     }
+                    std::cout << std::endl;
                 }
-                std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
+                std::cout << "Appuie sur la touche Entrer pour continuer... ";
                 std::cin.get();
                 break;
             }
