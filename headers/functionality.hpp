@@ -17,7 +17,7 @@ int getNoteNumberRegex(const std::string& fileName);
 
 std::vector<Note>listNoteOfMatiere(const Eleve &student, const std::string &matiere);
 
-double truncateTo2Digits(double &value);
+double truncateTo2Digits(double value);
 
 void menu(const Eleve &student);
 

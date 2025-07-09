@@ -188,7 +188,7 @@ int getNoteNumberRegex(const std::string& fileName) {
     return -1; // Aucun numéro trouvé
 }
 
-double truncateTo2Digits(double &value)
+double truncateTo2Digits(double value)
 {
     return static_cast<int>(value * 100) / 100.0;
 }
