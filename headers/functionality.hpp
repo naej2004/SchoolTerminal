@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+void beginProgram();
+
 std::string toLower(const std::string& str);
 
 std::string toUpper(const std::string & str);
@@ -15,9 +17,7 @@ int getNoteNumberRegex(const std::string& fileName);
 
 std::vector<Note>listNoteOfMatiere(const Eleve &student, const std::string &matiere);
 
-void rangStudent(const Eleve &student);
-
-double truncateTo2Digits(const double value);
+double truncateTo2Digits(double &value);
 
 void menu(const Eleve &student);
 

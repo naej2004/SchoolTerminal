@@ -14,6 +14,35 @@
 #include "functionality.hpp"
 
 
+void beginProgram()
+{
+    int choice;
+    do
+    {
+        std::cout << "Option possible : " << std::endl;
+        std::cout << "1- Se connecter " << std::endl;
+        std::cout << "2- Quitter l'application " << std::endl;
+        std::cout << "Entrer votre choix : ";
+        std::cin >> choice;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        entryErrorForInt();
+    }while (choice != 1 && choice != 2);
+    if (choice == 1)
+    {
+        std::array<std::string, 5> infoStudents{};
+        if (const bool isConnected = connexionStudent(infoStudents); !isConnected)
+        {
+            try_again_connexion(infoStudents);
+        }
+        else
+        {
+            Classe const classeStudent(infoStudents[3]);
+            const Eleve student(infoStudents[0], infoStudents[1], infoStudents[2], classeStudent, infoStudents[4]);
+            menu(student);
+        }
+    }
+}
+
 std::vector<std::string> listMatiere(const Eleve &student)
 {
     std::string const basePath = "../../data";
@@ -149,44 +178,6 @@ std::vector<Eleve> listStudent()
     return listEleve;
 }
 
-void rangStudent(const Eleve &student)
-{
-    auto listEleve = listStudent();
-    for (auto i = 0; i < listEleve.size() - 1; ++i)
-    {
-        bool echange = false;
-        for (auto j = 0; j < listEleve.size() - i - 1; ++j)
-        {
-            if (meanofStudent(listEleve[j]) < meanofStudent(listEleve[j+1]))
-            {
-                std::swap(listEleve[j], listEleve[j + 1]);
-                echange = true;
-            }
-        }
-        if (!echange)
-        {
-            break;
-        }
-    }
-    std::cout << "Classement des eleves : " << std::endl;
-    int monRang = 0;
-    for (auto i = 0; i < listEleve.size(); ++i)
-    {
-        if (student.getId() == listEleve[i].getId())
-        {
-            std::cout << i + 1 << "/ **" << listEleve[i].getName() << " " << listEleve[i].getPrenom() << " ("
-            << listEleve[i].getClasse().getName() << ") - " << meanofStudent(listEleve[i]) << "/20 **" << std::endl;
-            monRang = i + 1;
-        }else
-        {
-            std::cout << i + 1 << "/ " << listEleve[i].getName() << " " << listEleve[i].getPrenom() << " ("
-             << listEleve[i].getClasse().getName() << ") - " << meanofStudent(listEleve[i]) << "/20" << std::endl;
-        }
-    }
-
-    std::cout << "Vous etes " << monRang << "/" << listEleve.size()<< " !" << std::endl;
-}
-
 int getNoteNumberRegex(const std::string& fileName) {
     const std::regex pattern(R"(note(\d+)\.txt)"); // Regex : note + chiffres + .txt
     std::smatch match;
@@ -197,7 +188,7 @@ int getNoteNumberRegex(const std::string& fileName) {
     return -1; // Aucun numéro trouvé
 }
 
-double truncateTo2Digits(const double value)
+double truncateTo2Digits(double &value)
 {
     return static_cast<int>(value * 100) / 100.0;
 }
@@ -206,16 +197,16 @@ void menu(const Eleve &student)
 {
     bool go = true;
     while (go){
-        std::cout << "\n========================================SCHOOLTERMINAL++========================================\n"
+        std::cout << "\n========================================SCHOOLTERMINAL========================================\n"
                   << std::endl;
         std::cout << "1- Ajouter une matiere" << std::endl;
         std::cout << "2- Ajouter une note a une matiere" << std::endl;
         std::cout << "3- Modifier la note d'une matiere" << std::endl;
         std::cout << "4- Supprimer une note d'une matiere" << std::endl;
-        std::cout << "5- Calculer la moyenne d'une matiere" << std::endl;
-        std::cout << "6- Calculer ma moyenne generale" << std::endl;
-        std::cout << "7- Voir mes informations" << std::endl;
-        std::cout << "8- Classement des eleves" << std::endl;
+        std::cout << "5- Voir mes notes" << std::endl;
+        std::cout << "6- Calculer la moyenne d'une matiere" << std::endl;
+        std::cout << "7- Calculer ma moyenne generale" << std::endl;
+        std::cout << "8- Voir mes informations" << std::endl;
         std::cout << "9- Quitter\n" << std::endl;
         std::cout << "\nEntrer votre choix : ";
         int choice;
@@ -238,7 +229,7 @@ void menu(const Eleve &student)
                     std::cout << "Vous ne possedez actuellement aucune matiere a votre compte !" << std::endl;
                     std::cout << "Il est donc impossible pour vous d'ajouter une note a une matiere donnee !" << std::endl;
                     std::cout << "Pour ajouter une matiere, selectionner l'option '1' !" << std::endl;
-                    std::cout << "Appuie sur la touche Entrer pour continuer... ";
+                    std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
                     std::cin.get();
                     break;
                 }
@@ -250,7 +241,7 @@ void menu(const Eleve &student)
                 std::cout << "Choisissez la matiere dont vous souhaitez ajouter une note (ex : 2) : ";
                 int choixMatiere;
                 std::cin >> choixMatiere;
-                addNoteOfMatiere(student, toLower(allMatiere[choixMatiere - 1]));
+                addNoteOfMatiere(student, toUpper(allMatiere[choixMatiere - 1]));
                 break;
             }
         case 3:
@@ -262,7 +253,7 @@ void menu(const Eleve &student)
                     std::cout << "Vous ne possedez actuellement aucune matiere a votre compte !" << std::endl;
                     std::cout << "Il est donc impossible pour vous de modifier la note d'une matiere !" << std::endl;
                     std::cout << "Pour ajouter une matiere, selectionner l'option '1' !" << std::endl;
-                    std::cout << "Appuie sur la touche Entrer pour continuer... ";
+                    std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
                     std::cin.get();
                     break;
                 }
@@ -282,7 +273,7 @@ void menu(const Eleve &student)
                     std::cout << "Il est donc impossible pour vous de modifier une note pour cette matiere !" << std::endl;
                     std::cout << "Pour ajouter une note, selectionner l'option '2' !" << std::endl;
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    std::cout << "Appuie sur la touche Entrer pour continuer... ";
+                    std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
                     std::cin.get();
                     break;
                 }
@@ -309,7 +300,7 @@ void menu(const Eleve &student)
                     std::cout << "Il est donc impossible pour vous de modifier la note d'une matiere !" << std::endl;
                     std::cout << "Pour ajouter une matiere, selectionner l'option '1' !" << std::endl;
                     //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    std::cout << "Appuie sur la touche Entrer pour continuer... ";
+                    std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
                     std::cin.get();
                     break;
                 }
@@ -329,7 +320,7 @@ void menu(const Eleve &student)
                     std::cout << "Il est donc impossible pour vous de supprimer une note pour cette matiere !" << std::endl;
                     std::cout << "Pour ajouter une note, selectionner l'option '2' !" << std::endl;
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    std::cout << "Appuie sur la touche Entrer pour continuer... ";
+                    std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
                     std::cin.get();
                     break;
                 }
@@ -352,27 +343,26 @@ void menu(const Eleve &student)
                 if (allMatiere.empty())
                 {
                     std::cout << "Vous ne possedez actuellement aucune matiere a votre compte !" << std::endl;
-                    std::cout << "Il est donc impossible pour vous de calculer la moyenne d'une matiere !" << std::endl;
+                    std::cout << "Il est donc impossible pour vous de voir la liste de vos notes !" << std::endl;
                     std::cout << "Pour ajouter une matiere, selectionner l'option '1' !" << std::endl;
                     //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    std::cout << "Appuie sur la touche Entrer pour continuer... ";
+                    std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
                     std::cin.get();
                     break;
                 }
-                std::cout << "LISTE DES MATIERES : " << std::endl;
+                std::cout << "LISTE DES NOTES DE " << student.getName() << " " << student.getPrenom() << " (" <<
+                    student.getId() << ") : \n" << std::endl;
+
                 for (auto i = 1; i <= allMatiere.size(); ++i)
                 {
-                    std::cout << i << "- " << allMatiere[i-1] << std::endl;
+                    std::cout << i << "- " << allMatiere[i-1] << ": " << std::endl;
+                    auto const listNote = listNoteOfMatiere(student, allMatiere[i-1]);
+                    for (auto const &note : listNote)
+                    {
+                        std::cout << "\t- " << note.getValue() << "/" << note.getMaxPoint() << std::endl;
+                    }
                 }
-                std::cout << "Choisissez une matiere (ex : 2) : ";
-                int choixMatiere;
-                std::cin >> choixMatiere;
-                double const moyenneMatiere = meanOfMatiere(student, toLower(allMatiere[choixMatiere - 1]));
-                std::cout << student.getName() << " " << student.getPrenom() << " (" << student.getClasse().getName()
-                << ") votre moyenne a la matiere " << allMatiere[choixMatiere - 1] << " est de " << moyenneMatiere
-                << "/20" << std::endl;
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Appuie sur la touche Entrer pour continuer... ";
+                std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
                 std::cin.get();
                 break;
             }
@@ -386,7 +376,38 @@ void menu(const Eleve &student)
                     std::cout << "Il est donc impossible pour vous de calculer la moyenne d'une matiere !" << std::endl;
                     std::cout << "Pour ajouter une matiere, selectionner l'option '1' !" << std::endl;
                     //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    std::cout << "Appuie sur la touche Entrer pour continuer... ";
+                    std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
+                    std::cin.get();
+                    break;
+                }
+                std::cout << "LISTE DES MATIERES : " << std::endl;
+                for (auto i = 1; i <= allMatiere.size(); ++i)
+                {
+                    std::cout << i << "- " << allMatiere[i-1] << std::endl;
+                }
+                std::cout << "Choisissez une matiere (ex : 2) : ";
+                int choixMatiere;
+                std::cin >> choixMatiere;
+                double const moyenneMatiere = meanOfMatiere(student, toUpper(allMatiere[choixMatiere - 1]));
+                std::cout << student.getName() << " " << student.getPrenom() << " (" << student.getClasse().getName()
+                << ") votre moyenne a la matiere " << allMatiere[choixMatiere - 1] << " est de " << moyenneMatiere
+                << "/20" << std::endl;
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
+                std::cin.get();
+                break;
+            }
+        case 7:
+            {
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::vector<std::string> allMatiere =  listMatiere(student);
+                if (allMatiere.empty())
+                {
+                    std::cout << "Vous ne possedez actuellement aucune matiere a votre compte !" << std::endl;
+                    std::cout << "Il est donc impossible pour vous de calculer la moyenne d'une matiere !" << std::endl;
+                    std::cout << "Pour ajouter une matiere, selectionner l'option '1' !" << std::endl;
+                    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
                     std::cin.get();
                     break;
                 }
@@ -399,33 +420,14 @@ void menu(const Eleve &student)
                 std::cout << student.getName() << " " << student.getPrenom() << " (" << student.getClasse().getName()
                 << ") votre moyenne global est de " << moyenneStudent << "/20" << std::endl;
                 //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Appuie sur la touche Entrer pour continuer... ";
+                std::cout << "\nAppuie sur la touche Entrer pour continuer... ";
                 std::cin.get();
-                break;
-            }
-        case 7:
-            {
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                infoOfStudent(student);
                 break;
             }
         case 8:
             {
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::vector<std::string> allMatiere =  listMatiere(student);
-                if (allMatiere.empty())
-                {
-                    std::cout << "Vous ne possedez actuellement aucune matiere a votre compte !" << std::endl;
-                    std::cout << "Il est donc impossible pour vous de voir le classement des eleves !" << std::endl;
-                    std::cout << "Pour ajouter une matiere, selectionner l'option '1' !" << std::endl;
-                    //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    std::cout << "Appuie sur la touche Entrer pour continuer... ";
-                    std::cin.get();
-                    break;
-                }
-                rangStudent(student);
-                std::cout << "Appuie sur la touche Entrer pour continuer... ";
-                std::cin.get();
+                infoOfStudent(student);
                 break;
             }
         case 9:
@@ -449,7 +451,7 @@ void addNoteOfMatiere(const Eleve &student, const std::string &matiere)
     {
         if(folder.is_directory() && folder.path().filename().string() == matiere)
         {
-            std::cout << "La matierer existe !" << std::endl;
+            //std::cout << "La matierer existe !" << std::endl;
             int nombreNotes = 0;
             for (auto const &sub_folder : std::filesystem::directory_iterator(folder.path()))
             {
@@ -520,8 +522,6 @@ void addNoteOfMatiere(const Eleve &student, const std::string &matiere)
             }
         }
     }
-
-
 }
 
 void addMatiere(const Eleve &student)
@@ -529,7 +529,7 @@ void addMatiere(const Eleve &student)
     std::cout << "Ecris le nom de la matiere : ";
     std::string nameMatiere;
     std::getline(std::cin, nameMatiere);
-    nameMatiere = toLower(nameMatiere);
+    nameMatiere = toUpper(nameMatiere);
     std::string const basePath = "../../data";
     std::string const id = student.getId();
     std::filesystem::path const fullPath = std::filesystem::path(basePath) / id;
@@ -537,7 +537,7 @@ void addMatiere(const Eleve &student)
     {
         if(folder.is_directory() && folder.path().filename().string() == nameMatiere)
         {
-            std::cout << "Cette matiere existe deja !" << std::endl;
+            //std::cout << "Cette matiere existe deja !" << std::endl;
             int choix;
             do
             {
@@ -551,7 +551,7 @@ void addMatiere(const Eleve &student)
                 {
                     std::cout << "Entrer un autre nom : " << std::endl;
                     std::getline(std::cin, nameMatiere);
-                    nameMatiere = toLower(nameMatiere);
+                    nameMatiere = toUpper(nameMatiere);
                 }else if (choix == 2)
                 {
                     return;
@@ -564,7 +564,7 @@ void addMatiere(const Eleve &student)
             while (choix != 1 && choix != 2);
         }
     }
-    std::cout << "Entrer le coefficient de la matiere : " << std::endl;
+    std::cout << "Entrer le coefficient de la matiere : ";
     int coefficentMatiere;
     std::cin >> coefficentMatiere;
     std::filesystem::path directoryMatiere = std::filesystem::path(fullPath) / nameMatiere;
@@ -576,18 +576,11 @@ void addMatiere(const Eleve &student)
         if (infoMatiere.is_open())
         {
             infoMatiere << nameMatiere << "\n" << coefficentMatiere;
-            std::cout << "Fichier infoMatiere.txt cree avec succes !" << std::endl;
+            //std::cout << "Fichier infoMatiere.txt cree avec succes !" << std::endl;
             infoMatiere.close();
         }
         std::filesystem::path const &noteDirectory = directoryMatiere / "notes";
-        if (std::filesystem::create_directory(noteDirectory))
-        {
-            std::cout << "Dossier Notes ajoute avec succes !" << std::endl;
-        }
-        else
-        {
-            std::cout << "Dossier Notes non ajoute !" << std::endl;
-        }
+        std::filesystem::create_directory(noteDirectory);
     }
     else
     {
@@ -664,7 +657,7 @@ void deleteNoteofMatiere(const Eleve &student, const Note &note, int niemeNote)
                 if (niemeNote == getNoteNumberRegex(contenu.path().filename().string()))
                 {
                     std::filesystem::remove(contenu.path());
-                    std::cout << "Fichier supprime avec succees !" << std::endl;
+                    std::cout << "Note supprime avec succees !" << std::endl;
                     return;
                 }
             }
@@ -744,7 +737,7 @@ double meanofStudent(const Eleve &student)
 
 void infoOfStudent(const Eleve &student)
 {
-    std::cout <<"Nom : " << student.getName() << std::endl;
+    std::cout <<"\nNom : " << student.getName() << std::endl;
     std::cout << "Prenom : " << student.getPrenom() << std::endl;
     std::cout << "Classe : " << student.getClasse().getName() << std::endl;
     std::cout << "LISTES DES MATIERES : " << std::endl;
@@ -764,6 +757,8 @@ void infoOfStudent(const Eleve &student)
             " /20) "<< std::endl;
         }
         std::cout << "Votre moyenne generale est de " << meanofStudent(student) << "/20 !" << std::endl;
+        std::cout << "\nAppuie sur la touche Entrer pour quitter le programme... ";
+        std::cin.get();
     }
 }
 
@@ -802,6 +797,7 @@ Eleve createStudent()
     std::cout << "Entrer un ID : ";
     std::string id;
     std::cin >> id;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     id = toLower(id);
     std::cout << "Entrer votre nom de famille : ";
     std::string nom;
@@ -817,7 +813,7 @@ Eleve createStudent()
     std::string genre;
     do
     {
-        std::cout << "Entrer votre genre (1- Masculin/ 2- Feminin) :";
+        std::cout << "Entrer votre genre (1- Masculin/ 2- Feminin) : ";
         std::cin >> choice;
         entryErrorForInt();
         if (choice == 1)
@@ -863,7 +859,7 @@ Eleve createStudent()
             idFile.close();
             std::cout << std::endl;
         }
-        std::cout << "Eleve cree avec success !" << std::endl;
+        //std::cout << "Eleve cree avec success !" << std::endl;
     }
     return newStudent;
 }
