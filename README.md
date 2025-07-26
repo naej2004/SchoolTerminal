@@ -13,7 +13,3 @@ Voici la demarche à suivre : https://code.visualstudio.com/docs/languages/cpp#_
 
 CONTENTEZ VOUS UNIQUEMENT DE LA PARTIE 'Example: Install MinGW-x64 on Windows' !!
 LES AUTRES NE SERONT PAS NECCESSAIRE A L'EXECUTION DU PROJET.
-
-
-
-N.B : Actuellement, le projet est en mode terminal. Je compte faire une version graphique avec le framework Qt (J'y travaille actuellement)
